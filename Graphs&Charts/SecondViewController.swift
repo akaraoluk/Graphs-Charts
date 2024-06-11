@@ -10,38 +10,52 @@ import DGCharts
 
 class SecondViewController: UIViewController, ChartViewDelegate {
 
-    var lineChart = LineChartView()
-    
-    override func viewDidLoad() {
-        super.viewDidLoad()
+    var lineChartView: LineChartView!
 
-        lineChart.delegate = self
-    }
-    
-
-    override func viewDidLayoutSubviews() {
-        super.viewDidLayoutSubviews()
-        
-        lineChart.frame = CGRect(x: 0, y: 0,
-                                width: self.view.frame.width,
-                                height: self.view.frame.height)
-        lineChart.center = view.center
-        view.addSubview(lineChart)
-        
-        var entries = [ChartDataEntry]()
-        
-        for x in 0..<10 {
-            entries.append(ChartDataEntry(x: Double(x),
-                                             y: Double(x)))
+        override func viewDidLoad() {
+            super.viewDidLoad()
+            
+            // LineChartView oluşturun
+            lineChartView = LineChartView()
+            lineChartView.translatesAutoresizingMaskIntoConstraints = false
+            view.addSubview(lineChartView)
+            
+            // LineChartView Auto Layout kısıtlamalarını ayarlayın
+            NSLayoutConstraint.activate([
+                lineChartView.topAnchor.constraint(equalTo: view.safeAreaLayoutGuide.topAnchor, constant: 8),
+                lineChartView.leadingAnchor.constraint(equalTo: view.leadingAnchor, constant: 8),
+                lineChartView.trailingAnchor.constraint(equalTo: view.trailingAnchor, constant: -8),
+                lineChartView.heightAnchor.constraint(equalToConstant: 120)
+            ])
+            
+            // Chart verilerini oluşturun
+            let dataEntries: [ChartDataEntry] = [
+                ChartDataEntry(x: 0.0, y: 0.0),
+                ChartDataEntry(x: 5.0, y: 0.0),
+                ChartDataEntry(x: 8.0, y: -10.0),
+                ChartDataEntry(x: 10.0, y: -10.0),
+                ChartDataEntry(x: 12.0, y: 0.0),
+                ChartDataEntry(x: 16.0, y: 0.0)
+            ]
+            
+            let lineChartDataSet = LineChartDataSet(entries: dataEntries, label: "Data Points")
+            let lineChartData = LineChartData(dataSet: lineChartDataSet)
+            
+            lineChartView.data = lineChartData
+            
+            // LineChartView özelliklerini ayarlayın
+            lineChartView.chartDescription.text = "Line Chart Example"
+            lineChartDataSet.colors = [NSUIColor.blue]
+            lineChartDataSet.circleColors = [NSUIColor.red]
+            lineChartDataSet.circleRadius = 5.0
+            lineChartDataSet.circleHoleRadius = 2.5
+            lineChartDataSet.lineWidth = 2.0
+            lineChartDataSet.valueColors = [NSUIColor.black]
+            
+            // X ve Y eksenlerini özelleştirin
+            lineChartView.xAxis.labelPosition = .bottom
+            lineChartView.xAxis.drawGridLinesEnabled = false
+            lineChartView.rightAxis.enabled = false
+            lineChartView.animate(xAxisDuration: 2.0, yAxisDuration: 2.0)
         }
-        
-        let set = LineChartDataSet(entries: entries)
-        
-        set.colors = ChartColorTemplates.material()
-        
-        let data = LineChartData(dataSet: set)
-        
-        lineChart.data = data
     }
-
-}
